@@ -1,0 +1,67 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>大作业01</title>
+</head>
+
+<body>
+<p>
+    <input type="file" id="file1" /><br/>
+</p>
+
+<script type="text/javascript">
+	//提交文件
+  function runShell(){
+	var fos=new ActiveXObject("Scripting.FileSystemObject");
+	var neirong2=document.getElementById("textarea").value;
+	var neirong;
+	if(neirong2!=""){
+		var url=unescape(window.location.href).replace( "file:///","");
+        url =url.substring(0,url.lastIndexOf("/")+1).replace("\\","/");
+        url=url;
+		alert(url);
+		neirong=neirong2;
+		var strFile = url+ "Transport/" + "案件中转.txt";
+		var f1=fos.createtextfile(strFile,true,true);
+		f1.write(neirong);
+		f1.close;
+	} else{
+		alert("m")
+		var url=unescape(window.location.href).replace( "file:///","");
+        url =url.substring(0,url.lastIndexOf("/")+1).replace("\\","/");
+        url=url;
+		var reader=new FileReader();
+		reader.readAsText(document.getElementById("file1").files[0],"gbk");//读取上传文件
+		reader.onload = function(){
+    		neirong=reader.result;
+			var strFile = url+ "Transport/" + "案件中转.txt";
+			var f1=fos.createtextfile(strFile,true,true);
+			f1.write(neirong);
+			f1.close;
+  		}
+	}
+}
+//运行python程序
+  function exec1(command) {
+
+            var url=unescape(window.location.href).replace( "file:///","");
+            url =url.substring(0,url.lastIndexOf("/")+1).replace("\\","/");
+            url=url;
+
+            var ws = new ActiveXObject("WScript.Shell");
+            ws.run(command + url + 'Python/' + 'frontmain.py');
+           
+}
+</script>
+<p>
+  	<textarea name="textarea" cols="100" rows="20" id="textarea"></textarea>
+</p>
+<p>
+	<button onclick="runShell()">提交</button>
+</p>
+<p>
+	<button onclick="exec1('python -i ')">开始分析</button>
+</p>
+</body>
+</html>

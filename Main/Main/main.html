@@ -1,0 +1,141 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>大作业01</title>
+</head>
+
+<body>
+<p>
+    <input type="file" id="file1" /><br/>
+</p>
+<script src="https://cdn.bootcss.com/FileSaver.js/2014-11-29/FileSaver.js"></script>
+<script type="text/javascript">
+	//提交文件
+  function runShell(){
+	var fos=new ActiveXObject("Scripting.FileSystemObject");
+	var neirong2=document.getElementById("textarea").value;
+	var neirong;
+	if(neirong2!=""){
+		var url=unescape(window.location.href).replace( "file:///","");
+        url =url.substring(0,url.lastIndexOf("/")+1).replace("\\","/");
+        url=url;
+		neirong=neirong2;
+		var strFile = url+ "Transport/" + "案件中转.txt";
+		var f1=fos.createtextfile(strFile,true,true);
+		f1.write(neirong);
+		f1.close;
+	} else{
+		var url=unescape(window.location.href).replace( "file:///","");
+        url =url.substring(0,url.lastIndexOf("/")+1).replace("\\","/");
+        url=url;
+		var reader=new FileReader();
+		reader.readAsText(document.getElementById("file1").files[0],"gbk");//读取上传文件
+		reader.onload = function(){
+    		neirong=reader.result;
+			var strFile = url+ "Transport/" + "案件中转.txt";
+			var f1=fos.createtextfile(strFile,true,true);
+			f1.write(neirong);
+			f1.close;
+  		}
+	}
+}
+//运行python程序
+  function exec1(command) {
+
+            var url=unescape(window.location.href).replace( "file:///","");
+            url =url.substring(0,url.lastIndexOf("/")+1).replace("\\","/");
+            url=url;
+	  		alert(url);
+            var ws = new ActiveXObject("WScript.Shell");
+            ws.run(command + url + 'Python/' + 'frontmain.py');
+           
+}
+//显示结果
+	function showresult(){
+		var url=unescape(window.location.href).replace( "file:///","");
+        url =url.substring(0,url.lastIndexOf("/")+1).replace("\\","/");
+        url=url+"mytxt.txt";
+		var fso=new ActiveXObject("Scripting.FileSystemObject");
+		var openf1 = fso.OpenTextFile(url,1,false);
+		var str = openf1.ReadAll();
+		var strs=str.split(",")
+		var htm='';
+        for(var i=0;i<6;i++){
+			if(i==0){
+				htm +="当事人"+'<input type="checkbox" id="01">'+strs[0]+'<br />';
+			}
+			if(i==1){
+				htm +="性别"+'<input type="checkbox" id="02">'+strs[1]+'<br />';
+			}
+            if(i==2){
+				htm +="民族"+'<input type="checkbox" id="03">'+strs[2]+'<br />';
+			}
+			if(i==3){
+				htm +="出生地"+'<input type="checkbox" id="04">'+strs[3]+'<br />';
+			}
+			if(i==4){
+				htm +="案由"+'<input type="checkbox" id="05">'+strs[4]+'<br />';
+			}
+			if(i==5){
+				htm +="相关法院"+'<input type="checkbox" id="06">'+strs[5]+'<br />';
+			}
+      }
+        document.getElementById("demo").innerHTML = htm;
+		var newbutton='<button id="export">保存案例与标注</button>'+'<br />';
+		document.getElementById("button").innerHTML = newbutton;
+		var button = document.getElementById("export");
+ 		button.addEventListener("click", savejson, false);
+		
+	}
+	function savejson(){
+		var url=unescape(window.location.href).replace( "file:///","");
+        url =url.substring(0,url.lastIndexOf("/")+1).replace("\\","/");
+        url=url+"mytxt.txt";
+		var fso=new ActiveXObject("Scripting.FileSystemObject");
+		var openf1 = fso.OpenTextFile(url,1,false);
+		var str = openf1.ReadAll();
+		var strs=str.split(",")
+		var data="{";
+		if(document.getElementById("01").checked){
+			data+="Criminals:"+"'"+strs[0]+"'";
+		}
+		if(document.getElementById("02").checked){
+			data+="Gender:"+"'"+strs[1]+"'";
+		}
+		if(document.getElementById("03").checked){
+			data+="Ethnicity:"+"'"+strs[2]+"'";
+		}
+		if(document.getElementById("04").checked){
+			data+="Birthplace:"+"'"+strs[3]+"'";
+		}
+		if(document.getElementById("05").checked){
+			data+="Accusation:"+"'"+strs[4]+"'";
+		}
+		if(document.getElementById("06").checked){
+			data+="Courts:"+"'"+strs[5]+"'";
+		}
+		data+="}";
+		alert(data);
+		var content = JSON.stringify(data);
+      	var blob = new Blob([content], {type: "text/plain;charset=utf-8"});
+      	saveAs(blob, "marked.json");
+		
+}
+</script>
+<p>
+  	<textarea name="textarea" cols="100" rows="20" id="textarea"></textarea>
+</p>
+<p>
+	<button onclick="runShell()">提交</button>
+</p>
+<p>
+	<button onclick="exec1('python -i ')">开始分析</button>
+</p>
+<p>
+	<button onclick="showresult()">显示结果</button>
+</p>
+<p id="demo"></p>
+<p id="button"></p>
+</body>
+</html>
