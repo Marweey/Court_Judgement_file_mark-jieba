@@ -5,8 +5,6 @@
 ```bash
   .
    │  README.md    #本文档
-   │  演示视频.mp4  #演示视频
-   │  研究报告.doc  #研究报告
    ├─2022_Data_Mark
    │    ├─txt
    │    │   ├─文书
